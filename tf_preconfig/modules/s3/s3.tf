@@ -20,11 +20,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encryption" {
       sse_algorithm = "AES256"
     }
   }
+}
 
-resource "aws_s3_bucket_object" "parse_me" {
+resource "aws_s3_object" "parse_me" {
   bucket = aws_s3_bucket.s3_tf_backend.bucket
   key    = "parse_me.txt"
   acl    = "private"  
   source = "parse_me.txt"
-  }
 }
