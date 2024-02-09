@@ -1,4 +1,11 @@
 terraform {
+  backend "s3" {
+    bucket  = ""
+    key     = "terraform_backend/terraform.tfstate"
+    encrypt = true
+    region  = "us-east-1"
+    profile = "daniel-interview"
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
