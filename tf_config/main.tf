@@ -1,11 +1,4 @@
 terraform {
-  backend "s3" {
-    bucket  = "daniel-interview-s3-nice-tf-backend"
-    key     = "terraform_backend/terraform.tfstate"
-    encrypt = true
-    region  = "us-east-1"
-    profile = "daniel-interview"
-  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -23,6 +16,12 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-module "vpc" {
+module "lambda" {
   source = "./modules/lambda"
+}
+
+module "s3" {
+  source = "./modules/s3"
+
+  lambda_arn = module.lambda.lambda_arn
 }

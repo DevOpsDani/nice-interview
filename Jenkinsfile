@@ -10,40 +10,9 @@ pipeline {
             steps {
                 script {
                     // Clone the repository
+                    deleteDir()
                     def repoURL = 'https://github.com/DevOpsDani/nice-interview.git'
                     git branch: 'main', credentialsId: 'daniel', url: repoURL
-                }
-            }
-        }
-        stage('Terraform Plan - Pre Config') {
-            steps {
-                script {
-                    dir('tf_preconfig') {
-                        // Run terraform init on the stage that creates our s3 bucket that will include our text file and the terraform backend
-
-                        sh 'terraform init'
-                        TERRAFORM_PLAN_OUT = sh(script: 'terraform plan -detailed-exitcode', returnStatus: true, returnStdout: true)
-
-                        if ("$TERRAFORM_PLAN_OUT" == '2') {
-                            echo 'Changes detected. Proceeding with Terraform apply'
-                            currentBuild.result = 'SUCCESS'
-                        } else {
-                            echo 'No changes detected. Skipping Terraform apply.'
-                        }
-                    }
-                }
-            }
-        }
-        stage('Terraform apply - pre config') {
-            when {
-                expression { currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                script {
-                    dir('tf_preconfig') {
-                        sh 'terraform init'
-                        sh 'terraform apply -auto-approve'
-                    }
                 }
             }
         }
@@ -51,7 +20,7 @@ pipeline {
             steps {
                 script {
                     dir('tf_config') {
-                        sh 'terraform init -backend-config="key=terraform_backend/terraform.tfstate"'
+                        sh 'terraform init'
                         TERRAFORM_PLAN_OUT = sh(script: 'terraform plan -detailed-exitcode', returnStatus: true, returnStdout: true)
 
                         if ("$TERRAFORM_PLAN_OUT" == '2') {
@@ -68,6 +37,15 @@ pipeline {
             when {
                 expression { currentBuild.result == 'SUCCESS' }
             }
+            steps {
+                script {
+                    dir('tf_config') {
+                        sh 'terraform apply -auto-approve'
+                }
+            }
+         }
+      }
+        stage('Copy file to S3') {
             steps {
                 script {
                     dir('tf_config') {

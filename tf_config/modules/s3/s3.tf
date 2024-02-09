@@ -1,7 +1,5 @@
-# This step will build the Bucket that will host both nessecery files and the tfstate backend file
-
 resource "aws_s3_bucket" "s3_tf_backend" {
-  bucket = "daniel-interview-s3-nice-tf-backend"
+  bucket = "daniel-interview-s3-nice"
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_public_block" {
@@ -22,9 +20,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encryption" {
   }
 }
 
-# resource "aws_s3_object" "parse_me" {
-#   bucket = aws_s3_bucket.s3_tf_backend.bucket
-#   key    = "parse_me.txt"
-#   acl    = "private"  
-#   source = "parse_me.txt"
-# }
+resource "aws_s3_bucket_notification" "bucket_terraform_notification" {
+   bucket = aws_s3_bucket.s3_tf_backend.id
+   lambda_function {
+       lambda_function_arn = var.lambda_arn
+       events = ["s3:ObjectCreated:*"]
+       filter_suffix = ".txt"
+   }
+}
+
+
