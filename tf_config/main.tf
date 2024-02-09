@@ -24,4 +24,5 @@ module "s3" {
   source = "./modules/s3"
 
   lambda_arn = module.lambda.lambda_arn
+  depends_on = [module.lambda]
 }

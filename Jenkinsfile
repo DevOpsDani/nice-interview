@@ -10,7 +10,6 @@ pipeline {
             steps {
                 script {
                     // Clone the repository
-                    deleteDir()
                     def repoURL = 'https://github.com/DevOpsDani/nice-interview.git'
                     git branch: 'main', credentialsId: 'daniel', url: repoURL
                 }
@@ -45,14 +44,14 @@ pipeline {
             }
          }
       }
-        stage('Copy file to S3') {
-            steps {
-                script {
-                    dir('tf_config') {
-                        sh 'terraform apply -auto-approve'
-                }
-            }
-         }
-      }
+    //     stage('Copy file to S3') {
+    //         steps {
+    //             script {
+    //                 dir('tf_config') {
+    //                     sh 'terraform apply -auto-approve'
+    //             }
+    //         }
+    //      }
+    //   }
     }
 }
