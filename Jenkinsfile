@@ -32,7 +32,7 @@ pipeline {
                 }
             }
         }
-        stage('Terraform apply config') {
+        stage('Terraform apply') {
             when {
                 expression { currentBuild.result == 'SUCCESS' }
             }
