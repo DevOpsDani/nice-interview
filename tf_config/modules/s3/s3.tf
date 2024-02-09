@@ -24,7 +24,7 @@ resource "aws_s3_bucket_notification" "bucket_terraform_notification" {
    bucket = aws_s3_bucket.s3_tf_backend.id
    lambda_function {
        lambda_function_arn = var.lambda_arn
-       events = ["s3:ObjectCreated:Copy"]
+       events = ["s3:ObjectCreated:*"]
    }
 }
 
