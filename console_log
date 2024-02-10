@@ -1,0 +1,272 @@
+Started by user Daniel Ben Shushan
+Replayed #12
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /Users/danielb630/.jenkins/workspace/daniel-interview-nice-pipeline
+[Pipeline] {
+[Pipeline] withCredentials
+WARNING: Unknown parameter(s) found for class type 'com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding': keyIdVariable,secretVariable
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Clone Repository)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] git
+The recommended git tool is: NONE
+Warning: CredentialId "daniel" could not be found.
+ > git rev-parse --resolve-git-dir /Users/danielb630/.jenkins/workspace/daniel-interview-nice-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DevOpsDani/nice-interview.git # timeout=10
+Fetching upstream changes from https://github.com/DevOpsDani/nice-interview.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/DevOpsDani/nice-interview.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 80ee7e6c528be91719a20a91c7b56b57f5c2e9dd (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 80ee7e6c528be91719a20a91c7b56b57f5c2e9dd # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 80ee7e6c528be91719a20a91c7b56b57f5c2e9dd # timeout=10
+Commit message: "fix lambda"
+ > git rev-list --no-walk 6e6bec6cdd62081053c47ff07a1dc5df663d721b # timeout=10
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Terraform Plan - Config)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /Users/danielb630/.jenkins/workspace/daniel-interview-nice-pipeline/tf_config
+[Pipeline] {
+[Pipeline] sh
++ terraform init
+
+[0m[1mInitializing the backend...[0m
+[0m[1mInitializing modules...[0m
+
+[0m[1mInitializing provider plugins...[0m
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Using previously-installed hashicorp/aws v5.36.0
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+[Pipeline] sh
++ terraform plan -detailed-exitcode
+[Pipeline] echo
+Changes detected. Proceeding with Terraform apply
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Terraform apply)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /Users/danielb630/.jenkins/workspace/daniel-interview-nice-pipeline/tf_config
+[Pipeline] {
+[Pipeline] sh
++ terraform apply -auto-approve
+[0m[1mdata.aws_region.current: Reading...[0m[0m
+[0m[1mdata.aws_caller_identity.current: Reading...[0m[0m
+[0m[1mdata.aws_region.current: Read complete after 0s [id=us-east-1][0m
+[0m[1mmodule.lambda.aws_lambda_function.lambda: Refreshing state... [id=daniel-interview-nice-devops-interview-lambda][0m
+[0m[1mdata.aws_caller_identity.current: Read complete after 0s [id=557414474363][0m
+[0m[1mmodule.s3.aws_s3_bucket.s3_tf_backend: Refreshing state... [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1mmodule.s3.aws_lambda_permission.lambda_permission: Refreshing state... [id=AllowExecutionFromS3Bucket][0m
+[0m[1mmodule.s3.aws_s3_bucket_notification.bucket_terraform_notification: Refreshing state... [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1mmodule.s3.aws_s3_bucket_public_access_block.s3_public_block: Refreshing state... [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1mmodule.s3.aws_s3_bucket_server_side_encryption_configuration.s3_encryption: Refreshing state... [id=daniel-interview-nice-devops-interview-bucket][0m
+
+[1m[36mNote:[0m[1m Objects have changed outside of Terraform
+[0m
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+[1m  # module.lambda.aws_lambda_function.lambda[0m has been deleted
+[0m  [31m-[0m[0m resource "aws_lambda_function" "lambda" {
+      [31m-[0m[0m arn                            = "arn:aws:lambda:us-east-1:557414474363:function:daniel-interview-nice-devops-interview-lambda" [90m-> null[0m[0m
+        id                             = "daniel-interview-nice-devops-interview-lambda"
+        tags                           = {}
+        [90m# (21 unchanged attributes hidden)[0m[0m
+
+        [90m# (3 unchanged blocks hidden)[0m[0m
+    }
+
+[1m  # module.s3.aws_s3_bucket.s3_tf_backend[0m has been deleted
+[0m  [31m-[0m[0m resource "aws_s3_bucket" "s3_tf_backend" {
+      [31m-[0m[0m arn                         = "arn:aws:s3:::daniel-interview-nice-devops-interview-bucket" [90m-> null[0m[0m
+      [31m-[0m[0m id                          = "daniel-interview-nice-devops-interview-bucket" [90m-> null[0m[0m
+        tags                        = {}
+        [90m# (9 unchanged attributes hidden)[0m[0m
+
+        [90m# (3 unchanged blocks hidden)[0m[0m
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+
+Terraform will perform the following actions:
+
+[1m  # module.lambda.aws_lambda_function.lambda[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_function" "lambda" {
+      [32m+[0m[0m architectures                  = (known after apply)
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m filename                       = "lambda_function.zip"
+      [32m+[0m[0m function_name                  = "daniel-interview-nice-devops-interview-lambda"
+      [32m+[0m[0m handler                        = "index.lambda_handler"
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m invoke_arn                     = (known after apply)
+      [32m+[0m[0m last_modified                  = (known after apply)
+      [32m+[0m[0m memory_size                    = 128
+      [32m+[0m[0m package_type                   = "Zip"
+      [32m+[0m[0m publish                        = false
+      [32m+[0m[0m qualified_arn                  = (known after apply)
+      [32m+[0m[0m qualified_invoke_arn           = (known after apply)
+      [32m+[0m[0m reserved_concurrent_executions = -1
+      [32m+[0m[0m role                           = "arn:aws:iam::557414474363:role/daniel-interview-lambda-execution-role"
+      [32m+[0m[0m runtime                        = "python3.9"
+      [32m+[0m[0m signing_job_arn                = (known after apply)
+      [32m+[0m[0m signing_profile_version_arn    = (known after apply)
+      [32m+[0m[0m skip_destroy                   = false
+      [32m+[0m[0m source_code_hash               = (known after apply)
+      [32m+[0m[0m source_code_size               = (known after apply)
+      [32m+[0m[0m tags_all                       = (known after apply)
+      [32m+[0m[0m timeout                        = 3
+      [32m+[0m[0m version                        = (known after apply)
+    }
+
+[1m  # module.s3.aws_lambda_permission.lambda_permission[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_permission" "lambda_permission" {
+      [32m+[0m[0m action              = "lambda:InvokeFunction"
+      [32m+[0m[0m function_name       = (known after apply)
+      [32m+[0m[0m id                  = (known after apply)
+      [32m+[0m[0m principal           = "s3.amazonaws.com"
+      [32m+[0m[0m source_arn          = (known after apply)
+      [32m+[0m[0m statement_id        = "AllowExecutionFromS3Bucket"
+      [32m+[0m[0m statement_id_prefix = (known after apply)
+    }
+
+[1m  # module.s3.aws_s3_bucket.s3_tf_backend[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket" "s3_tf_backend" {
+      [32m+[0m[0m acceleration_status         = (known after apply)
+      [32m+[0m[0m acl                         = (known after apply)
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m bucket                      = "daniel-interview-nice-devops-interview-bucket"
+      [32m+[0m[0m bucket_domain_name          = (known after apply)
+      [32m+[0m[0m bucket_prefix               = (known after apply)
+      [32m+[0m[0m bucket_regional_domain_name = (known after apply)
+      [32m+[0m[0m force_destroy               = false
+      [32m+[0m[0m hosted_zone_id              = (known after apply)
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m object_lock_enabled         = (known after apply)
+      [32m+[0m[0m policy                      = (known after apply)
+      [32m+[0m[0m region                      = (known after apply)
+      [32m+[0m[0m request_payer               = (known after apply)
+      [32m+[0m[0m tags_all                    = (known after apply)
+      [32m+[0m[0m website_domain              = (known after apply)
+      [32m+[0m[0m website_endpoint            = (known after apply)
+    }
+
+[1m  # module.s3.aws_s3_bucket_notification.bucket_terraform_notification[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_notification" "bucket_terraform_notification" {
+      [32m+[0m[0m bucket      = (known after apply)
+      [32m+[0m[0m eventbridge = false
+      [32m+[0m[0m id          = (known after apply)
+
+      [32m+[0m[0m lambda_function {
+          [32m+[0m[0m events              = [
+              [32m+[0m[0m "s3:ObjectCreated:*",
+            ]
+          [32m+[0m[0m id                  = (known after apply)
+          [32m+[0m[0m lambda_function_arn = (known after apply)
+        }
+    }
+
+[1m  # module.s3.aws_s3_bucket_public_access_block.s3_public_block[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_public_access_block" "s3_public_block" {
+      [32m+[0m[0m block_public_acls       = true
+      [32m+[0m[0m block_public_policy     = true
+      [32m+[0m[0m bucket                  = (known after apply)
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m ignore_public_acls      = true
+      [32m+[0m[0m restrict_public_buckets = true
+    }
+
+[1m  # module.s3.aws_s3_bucket_server_side_encryption_configuration.s3_encryption[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encryption" {
+      [32m+[0m[0m bucket = (known after apply)
+      [32m+[0m[0m id     = (known after apply)
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m apply_server_side_encryption_by_default {
+              [32m+[0m[0m sse_algorithm = "AES256"
+            }
+        }
+    }
+
+[1mPlan:[0m 6 to add, 0 to change, 0 to destroy.
+[0m[0m[1mmodule.lambda.aws_lambda_function.lambda: Creating...[0m[0m
+[0m[1mmodule.lambda.aws_lambda_function.lambda: Creation complete after 6s [id=daniel-interview-nice-devops-interview-lambda][0m
+[0m[1mmodule.s3.aws_s3_bucket.s3_tf_backend: Creating...[0m[0m
+[0m[1mmodule.s3.aws_s3_bucket.s3_tf_backend: Creation complete after 4s [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1mmodule.s3.aws_lambda_permission.lambda_permission: Creating...[0m[0m
+[0m[1mmodule.s3.aws_s3_bucket_server_side_encryption_configuration.s3_encryption: Creating...[0m[0m
+[0m[1mmodule.s3.aws_s3_bucket_notification.bucket_terraform_notification: Creating...[0m[0m
+[0m[1mmodule.s3.aws_s3_bucket_public_access_block.s3_public_block: Creating...[0m[0m
+[0m[1mmodule.s3.aws_lambda_permission.lambda_permission: Creation complete after 1s [id=AllowExecutionFromS3Bucket][0m
+[0m[1mmodule.s3.aws_s3_bucket_public_access_block.s3_public_block: Creation complete after 1s [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1mmodule.s3.aws_s3_bucket_notification.bucket_terraform_notification: Creation complete after 1s [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1mmodule.s3.aws_s3_bucket_server_side_encryption_configuration.s3_encryption: Creation complete after 2s [id=daniel-interview-nice-devops-interview-bucket][0m
+[0m[1m[32m
+Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
+[0m
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Copy file to S3)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ aws s3 cp parse_me.txt s3://daniel-interview-nice-devops-interview-bucket
+Completed 71 Bytes/71 Bytes (65 Bytes/s) with 1 file(s) remaining
+upload: ./parse_me.txt to s3://daniel-interview-nice-devops-interview-bucket/parse_me.txt
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

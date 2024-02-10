@@ -21,7 +21,6 @@ pipeline {
                     dir('tf_config') {
                         sh 'terraform init'
                         TERRAFORM_PLAN_OUT = sh(script: 'terraform plan -detailed-exitcode', returnStatus: true, returnStdout: true)
-
                         if ("$TERRAFORM_PLAN_OUT" == '2') {
                             echo 'Changes detected. Proceeding with Terraform apply'
                             currentBuild.result = 'SUCCESS'
@@ -44,14 +43,13 @@ pipeline {
             }
          }
       }
-    //     stage('Copy file to S3') {
-    //         steps {
-    //             script {
-    //                 dir('tf_config') {
-    //                     sh 'terraform apply -auto-approve'
-    //             }
-    //         }
-    //      }
-    //   }
+        stage('Copy file to S3') {
+            steps {
+                script {
+                    sh 'aws s3 cp parse_me.txt s3://daniel-interview-nice-devops-interview-bucket'
+                }
+            }
+         }
+      }
     }
 }
