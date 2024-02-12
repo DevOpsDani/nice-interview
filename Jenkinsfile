@@ -10,6 +10,7 @@ pipeline {
             steps {
                 script {
                     // Clone the repository
+                    deleteDir()
                     def repoURL = 'https://github.com/DevOpsDani/nice-interview.git'
                     git branch: 'main', credentialsId: 'daniel', url: repoURL
                 }
